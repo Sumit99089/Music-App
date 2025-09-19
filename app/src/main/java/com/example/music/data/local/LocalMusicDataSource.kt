@@ -24,14 +24,15 @@ class LocalMusicDataSource @Inject constructor(private val context: Context) {
                 MediaStore.Audio.Media.DURATION
             )
             // Select only those audio who are Music, ie, IS_MUSIC != 0
-            val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
+//            val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
 
             val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
 
             context.contentResolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 projection,
-                selection,
+//                selection,
+                null,
                 null,
                 sortOrder
             )?.use{ cursor->
