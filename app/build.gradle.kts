@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.session)
     //Dagger-Hilt DI
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
