@@ -69,5 +69,11 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
+    //Material3 Extended pack
+    implementation(libs.material.icons.extended)
+    //Coil
+    implementation(libs.coil.compose)
+
+
 }
 
