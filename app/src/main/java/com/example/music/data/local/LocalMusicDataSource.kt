@@ -18,6 +18,8 @@ class LocalMusicDataSource @Inject constructor(private val context: Context) {
 
             val projection = arrayOf(
                 MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.ARTIST_ID,
+                MediaStore.Audio.Media.ALBUM_ID,
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.ALBUM,
@@ -39,6 +41,10 @@ class LocalMusicDataSource @Inject constructor(private val context: Context) {
 
                 val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
 
+                val artistIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST_ID)
+
+                val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+
                 val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
 
                 val albumColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
@@ -47,6 +53,8 @@ class LocalMusicDataSource @Inject constructor(private val context: Context) {
 
                 while(cursor.moveToNext()){
                     val id = cursor.getLong(idColumn)
+                    val artistId = cursor.getLong(artistIdColumn)
+                    val albumId = cursor.getLong(albumIdColumn)
                     val title = cursor.getString(titleColumn)
                     val artist = cursor.getString(artistColumn)
                     val album = cursor.getString(albumColumn)
@@ -56,7 +64,7 @@ class LocalMusicDataSource @Inject constructor(private val context: Context) {
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                         id
                     )
-                    songs.add(SongEntity(id, title, artist, album, duration, contentUri))
+                    songs.add(SongEntity(id, artistId, albumId,title, artist, album, duration, contentUri))
                 }
             }
             emit(songs)

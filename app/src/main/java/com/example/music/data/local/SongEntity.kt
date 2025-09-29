@@ -4,6 +4,8 @@ import android.net.Uri
 
 data class SongEntity(
     val id: Long,
+    val artistId: Long,
+    val albumId: Long,
     val title: String,
     val artist: String,
     val album: String,
