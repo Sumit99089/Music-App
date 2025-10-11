@@ -16,5 +16,4 @@ abstract class RepositoryModule {
     abstract fun bindSongRepository(
         songRepositoryImpl: SongRepositoryImpl
     ): SongRepositoryInterface
-
 }

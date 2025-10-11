@@ -18,7 +18,7 @@ object ServiceModule {
 
     @Provides
     @ServiceScoped
-    fun proivideExoPalyer(@ApplicationContext context: Context, audioAttributes: AudioAttributes): ExoPlayer {
+    fun provideExoPlayer(@ApplicationContext context: Context, audioAttributes: AudioAttributes): ExoPlayer {
         return ExoPlayer.Builder(context).setAudioAttributes(audioAttributes, true).setHandleAudioBecomingNoisy(true).build()
     }
 

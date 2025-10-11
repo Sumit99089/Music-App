@@ -2,8 +2,6 @@ package com.example.music.di
 
 import android.content.Context
 import com.example.music.data.local.LocalMusicDataSource
-import com.example.music.data.repository.SongRepositoryImpl
-import com.example.music.domain.repository.SongRepositoryInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

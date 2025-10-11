@@ -1,10 +1,11 @@
-package com.example.music.presentation.utils
+package com.example.music.presentation.library.components
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,74 +31,73 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.music.domain.models.SongModel
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 @Composable
 fun SongItem(
+    modifier: Modifier = Modifier,
     song: SongModel,
-    onClick: (SongModel) -> Unit
-) {
+    onClick: (SongModel)->Unit
+){
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick(song) }
+            .clickable{ onClick(song) }
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Album Art
+    ){
         Card(
             modifier = Modifier.size(56.dp),
             shape = RoundedCornerShape(8.dp)
-        ) {
+        ){
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(song.contentUri) // Using content URI for album art
+                    .data(song.contentUri)
                     .crossfade(true)
                     .build(),
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp)),
+                placeholder = rememberVectorPainter(Icons.Default.MusicNote),
                 contentDescription = "Album Art for ${song.title}",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.clip(RoundedCornerShape(8.dp)),
-                // Placeholder for when there's no album art
                 error = rememberVectorPainter(Icons.Default.MusicNote),
             )
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(Modifier.width(16.dp))
 
-        // Song Title and Artist
-        Column(modifier = Modifier.weight(1f)) {
+        Column (
+            Modifier.weight(1f)
+        ){
             Text(
-                text = song.title,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                text= song.title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
             Text(
                 text = song.artist,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
         }
 
-        // Duration
         Text(
-            text = formatDuration(song.duration),
+            text = formatTime(song.duration),
             style = MaterialTheme.typography.bodySmall,
             color = Color.DarkGray
         )
     }
 }
 
-// Helper function to format milliseconds into a user-friendly M:SS format
-private fun formatDuration(millis: Long): String {
-    val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
-    val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) -
-            TimeUnit.MINUTES.toSeconds(minutes)
-    return String.format("%d:%02d", minutes, seconds)
+fun formatTime(timeInMilis: Long):String{
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(timeInMilis)
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(timeInMilis) - TimeUnit.MINUTES.toSeconds(minutes)
+
+    return String.format(Locale.US,"%d:%02d", minutes, seconds)
 }
 
 @Preview(showBackground = true)
@@ -106,6 +105,7 @@ private fun formatDuration(millis: Long): String {
 fun SongItemPreview() {
     MaterialTheme {
         SongItem(
+            modifier = Modifier,
             song = SongModel(
                 id = 1L,
                 title = "A Cool Song Title That Might Be Very Long",
