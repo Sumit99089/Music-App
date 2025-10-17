@@ -1,9 +1,13 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
+
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
-    alias(libs.plugins.kotlin.kapt)
+//    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
 
     alias(libs.plugins.hilt)
 }
@@ -31,16 +35,13 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = true
     }
+}
+
+kotlin {
+    jvmToolchain(11)
 }
 
 dependencies {
@@ -54,6 +55,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,13 +70,15 @@ dependencies {
     implementation(libs.androidx.media3.session)
     //Dagger-Hilt DI
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+//    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
+
     implementation(libs.hilt.navigation.compose)
     //Material3 Extended pack
     implementation(libs.material.icons.extended)
     //Coil
     implementation(libs.coil.compose)
-
-
+    //Shimmer for Skeleton Loading
+    implementation(libs.compose.shimmer)
 }
 

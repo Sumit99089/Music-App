@@ -9,7 +9,7 @@ data class LibraryState(
     val songs: List<SongModel> = emptyList(),
     val albums: List<AlbumModel> = emptyList(),
     val artists: List<ArtistModel> = emptyList(),
-    val selectedTab: Tab = Tab.SONG,
+    val selectedTab: Tab = Tab.SONGS,
     val nowPlaying: SongModel? = null,
     val error: String? = null
 )

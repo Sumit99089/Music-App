@@ -2,6 +2,7 @@ package com.example.music.di
 
 import android.content.Context
 import com.example.music.data.local.LocalMusicDataSource
+import com.example.music.service.MusicServiceConnection
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,5 +18,11 @@ object AppModule {
     @Singleton
     fun provideLocalMusicDataSource(@ApplicationContext context: Context): LocalMusicDataSource {
         return LocalMusicDataSource(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMusicServiceConnection(@ApplicationContext context: Context): MusicServiceConnection {
+        return MusicServiceConnection(context)
     }
 }

@@ -4,7 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,25 +31,24 @@ import com.example.music.domain.models.ArtistModel
 
 @Composable
 fun ArtistItem(
-    modifier: Modifier = Modifier,
     artist: ArtistModel,
     onClick: (ArtistModel) -> Unit
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .clickable { onClick(artist) }
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
         Card(
-            modifier = Modifier.size(120.dp), // Adjust size as needed
-            shape = CircleShape
+            modifier = Modifier.fillMaxWidth().aspectRatio(1f), // Adjust size as needed
+            shape = CircleShape,
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "Artist: ${artist.name}",
-                modifier = Modifier.padding(24.dp).fillMaxSize(),// Padding for the icon inside the circle
+                modifier = Modifier.fillMaxWidth().padding(24.dp).fillMaxSize(),// Padding for the icon inside the circle
                 tint = Color.Gray
             )
         }
@@ -55,9 +57,8 @@ fun ArtistItem(
 
         Text(
             text = artist.name,
-            style = MaterialTheme.typography.bodyLarge.copy(
-                fontWeight = FontWeight.Bold
-            ),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center

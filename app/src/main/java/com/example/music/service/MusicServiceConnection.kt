@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 class MusicServiceConnection @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
 
     //SateFlows Exposed to ViewmModel and UI
