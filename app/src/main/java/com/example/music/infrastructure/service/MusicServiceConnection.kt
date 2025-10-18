@@ -1,4 +1,4 @@
-package com.example.music.service
+package com.example.music.infrastructure.service
 
 import android.content.ComponentName
 import android.content.Context
@@ -32,13 +32,16 @@ class MusicServiceConnection @Inject constructor(
     private var mediaController: MediaController? = null
     private var mediaItem: List<MediaItem> = emptyList()
 
+    private val playerEventListener = PlayerEventListener()
+
+
     init{
         val sessionToken = SessionToken(context, ComponentName(context, MusicService::class.java))
         val controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
         controllerFuture.addListener(
             {
                 mediaController = controllerFuture.get()
-                mediaController?.addListener(PlayerEventListener())
+                mediaController?.addListener( playerEventListener )
                 _isConnected.value = true
             },
             ContextCompat.getMainExecutor(context)
@@ -50,11 +53,10 @@ class MusicServiceConnection @Inject constructor(
     }
 
     fun setMediaSongs(songs: List<SongModel>){
-        mediaController?.setMediaItems(
-            songs.map { song ->
-                MediaItem.Builder().setMediaId(song.id.toString()).setUri(song.contentUri).build()
-            }
-        )
+        mediaItem = songs.map { song ->
+            MediaItem.Builder().setMediaId(song.id.toString()).setUri(song.contentUri).build()
+        }
+        mediaController?.setMediaItems(mediaItem)
         mediaController?.prepare()
     }
 
@@ -84,6 +86,7 @@ class MusicServiceConnection @Inject constructor(
     }
 
     fun release(){
+        mediaController?.removeListener(playerEventListener)
         mediaController?.release()
         mediaController = null
         _isConnected.value = false

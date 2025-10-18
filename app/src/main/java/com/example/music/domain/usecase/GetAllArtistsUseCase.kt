@@ -1,6 +1,5 @@
 package com.example.music.domain.usecase
 
-import com.example.music.domain.models.AlbumModel
 import com.example.music.domain.models.ArtistModel
 import com.example.music.domain.repository.SongRepositoryInterface
 import kotlinx.coroutines.flow.Flow

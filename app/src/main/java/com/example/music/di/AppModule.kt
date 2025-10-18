@@ -2,7 +2,7 @@ package com.example.music.di
 
 import android.content.Context
 import com.example.music.data.local.LocalMusicDataSource
-import com.example.music.service.MusicServiceConnection
+import com.example.music.infrastructure.service.MusicServiceConnection
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

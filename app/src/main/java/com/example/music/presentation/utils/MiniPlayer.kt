@@ -33,15 +33,17 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.music.domain.models.SongModel
 import com.example.music.presentation.library.LibraryEvent
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun MiniPlayer(
     song: SongModel?,
+    isPlaying: Boolean = false,
     onEvent: (LibraryEvent) -> Unit
 ) {
     if (song == null) return
 
-    val isPlaying = true // In a real app, this would come from your state
 
     Card(
         modifier = Modifier
@@ -97,3 +99,4 @@ fun MiniPlayerPreview() {
             )
     }
 }
+

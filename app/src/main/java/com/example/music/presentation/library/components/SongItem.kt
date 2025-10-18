@@ -31,8 +31,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.music.domain.models.SongModel
-import java.util.Locale
-import java.util.concurrent.TimeUnit
+import com.example.music.presentation.utils.formatTime
 
 @Composable
 fun SongItem(
@@ -43,7 +42,9 @@ fun SongItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable{ onClick(song) }
+            .clickable{
+                onClick(song)
+            }
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -91,13 +92,6 @@ fun SongItem(
             color = Color.DarkGray
         )
     }
-}
-
-fun formatTime(timeInMilis: Long):String{
-    val minutes = TimeUnit.MILLISECONDS.toMinutes(timeInMilis)
-    val seconds = TimeUnit.MILLISECONDS.toSeconds(timeInMilis) - TimeUnit.MINUTES.toSeconds(minutes)
-
-    return String.format(Locale.US,"%d:%02d", minutes, seconds)
 }
 
 @Preview(showBackground = true)

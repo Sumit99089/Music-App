@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -17,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,6 +30,9 @@ import com.example.music.domain.models.SongModel
 import com.example.music.presentation.library.tabs.AlbumTab
 import com.example.music.presentation.library.tabs.ArtistTab
 import com.example.music.presentation.library.tabs.SongTab
+import com.example.music.presentation.library.tabs.skeletons.AlbumTabSkeleton
+import com.example.music.presentation.library.tabs.skeletons.ArtistTabSkeleton
+import com.example.music.presentation.library.tabs.skeletons.SongTabSkeleton
 import com.example.music.ui.theme.MusicTheme
 import java.util.Locale
 
@@ -48,6 +49,7 @@ fun LibraryScreen(
         paddingValues = paddingValues
     )
 }
+
 @Composable
 fun LibraryScreenContent(
     state: LibraryState,
@@ -70,13 +72,13 @@ fun LibraryScreenContent(
                 val tabText = tab.name.lowercase().replaceFirstChar { it.titlecase(Locale.getDefault()) }
                 Tab(
                     selected = state.selectedTab == tab,
-                    onClick = { onEvent(LibraryEvent.OnTabSelected( tab )) },
+                    onClick = { onEvent(LibraryEvent.OnTabSelected(tab)) },
                 ) {
                     Text(
                         text = tabText,
                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(50)) // Clip the shape first
+                            .clip(RoundedCornerShape(50))
                             .background(
                                 if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent
                             )
@@ -85,8 +87,7 @@ fun LibraryScreenContent(
                                 color = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline,
                                 shape = RoundedCornerShape(50)
                             )
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                        ,
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -99,22 +100,30 @@ fun LibraryScreenContent(
             indicator = {}
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.align(BiasAlignment(0f, -0.1f)))
-                } else {
-                    when (state.selectedTab) {
-                        Tab.SONGS -> SongTab(
-                            songList = state.songs,
-                            onSongClicked = { onEvent(LibraryEvent.OnTabSelected(Tab.SONGS)) }
-                        )
-                        Tab.ARTISTS -> ArtistTab(
-                            artistList = state.artists,
-                            onArtistClick = { /* TODO: Fire event to navigate */ }
-                        )
-                        Tab.ALBUMS -> AlbumTab(
-                            albumList = state.albums,
-                            onAlbumClick = { /* TODO: Fire event to navigate */ }
-                        )
+                when {
+                    state.isLoading -> {
+                        // Show appropriate skeleton loader based on selected tab
+                        when (state.selectedTab) {
+                            Tab.SONGS -> SongTabSkeleton()
+                            Tab.ARTISTS -> ArtistTabSkeleton()
+                            Tab.ALBUMS -> AlbumTabSkeleton()
+                        }
+                    }
+                    else -> {
+                        when (state.selectedTab) {
+                            Tab.SONGS -> SongTab(
+                                songList = state.songs,
+                                onSongClicked = { song -> onEvent(LibraryEvent.OnSongClicked(song)) }
+                            )
+                            Tab.ARTISTS -> ArtistTab(
+                                artistList = state.artists,
+                                onArtistClick = { /* TODO: Fire event to navigate */ }
+                            )
+                            Tab.ALBUMS -> AlbumTab(
+                                albumList = state.albums,
+                                onAlbumClick = { /* TODO: Fire event to navigate */ }
+                            )
+                        }
                     }
                 }
             }
@@ -150,8 +159,8 @@ fun LibraryScreenPreview() {
         songs = sampleSongs,
         artists = sampleArtists,
         albums = sampleAlbums,
-        selectedTab = Tab.SONGS, // Start on the artist tab
-        nowPlaying = nowPlayingSong // Show the mini-player
+        selectedTab = Tab.ARTISTS,
+        nowPlaying = nowPlayingSong
     )
 
     MusicTheme {
@@ -162,6 +171,3 @@ fun LibraryScreenPreview() {
         )
     }
 }
-
-
-

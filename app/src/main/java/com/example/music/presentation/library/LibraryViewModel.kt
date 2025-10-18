@@ -1,13 +1,12 @@
 package com.example.music.presentation.library
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.music.domain.models.SongModel
 import com.example.music.domain.usecase.GetAllAlbumsUseCase
 import com.example.music.domain.usecase.GetAllArtistsUseCase
 import com.example.music.domain.usecase.GetAllSongsUseCase
+import com.example.music.infrastructure.service.MusicServiceConnection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +20,8 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
     private val getSongsUseCase: GetAllSongsUseCase,
     private val getArtistsUseCase: GetAllArtistsUseCase,
-    private val getAlbumsUseCase: GetAllAlbumsUseCase
+    private val getAlbumsUseCase: GetAllAlbumsUseCase,
+    private val musicServiceConnection: MusicServiceConnection
 ): ViewModel() {
     private val _state =  MutableStateFlow(LibraryState())
     val state = _state.asStateFlow()
@@ -33,7 +33,7 @@ class LibraryViewModel @Inject constructor(
 
     fun onEvent(event: LibraryEvent){
         when(event){
-            LibraryEvent.LoadMusic -> TODO()
+            LibraryEvent.LoadMusic -> loadMusic()
             LibraryEvent.OnMiniPlayerTapped -> TODO()
             LibraryEvent.OnPlayPauseClicked -> TODO()
             LibraryEvent.OnSearchClicked -> TODO()
@@ -58,5 +58,11 @@ class LibraryViewModel @Inject constructor(
                 _state.update { it.copy(albums = albums) }
             }.launchIn(viewModelScope)
         }
+    }
+
+    private fun playMusic(song: SongModel){
+        musicServiceConnection.playSong( song )
+        _state.update { it.copy( nowPlaying = song ) }
+
     }
 }
