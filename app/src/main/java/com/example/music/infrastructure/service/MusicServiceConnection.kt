@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -27,6 +28,9 @@ class MusicServiceConnection @Inject constructor(
 
     private val _nowPlaying: MutableStateFlow<MediaItem?> = MutableStateFlow<MediaItem?>(null)
     val nowPlaying:StateFlow<MediaItem?> = _nowPlaying.asStateFlow()
+
+    private val _isPlaying: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
     //Controller Exposed to ViewmModel and UI
     private var mediaController: MediaController? = null
@@ -54,7 +58,17 @@ class MusicServiceConnection @Inject constructor(
 
     fun setMediaSongs(songs: List<SongModel>){
         mediaItem = songs.map { song ->
-            MediaItem.Builder().setMediaId(song.id.toString()).setUri(song.contentUri).build()
+            val metadata = MediaMetadata.Builder()
+                .setTitle(song.title)
+                .setArtist(song.artist)
+                .setDurationMs(song.duration)
+                .build()
+
+            MediaItem.Builder()
+                .setMediaId(song.id.toString())
+                .setUri(song.contentUri)
+                .setMediaMetadata(metadata)
+                .build()
         }
         mediaController?.setMediaItems(mediaItem)
         mediaController?.prepare()
@@ -101,6 +115,9 @@ class MusicServiceConnection @Inject constructor(
             _nowPlaying.value = mediaItem
         }
 
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            _isPlaying.value = isPlaying
+        }
     }
 }
 
