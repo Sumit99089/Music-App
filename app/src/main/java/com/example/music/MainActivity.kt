@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import com.example.music.infrastructure.service.MusicServiceConnection
 import com.example.music.presentation.library.LibraryScreen
+import com.example.music.presentation.permissions.PermissionHandler
 import com.example.music.ui.theme.MusicTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -19,22 +20,21 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var musicServiceConnection: MusicServiceConnection
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MusicTheme {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = { Text(
-                                    text = "MusicPlayer"
-                            )
-                                    },
-                        )
+                PermissionHandler {
+                    // This content will only be shown if permissions are granted
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(title = { Text("Music") })
+                        }
+                    ) { innerPadding ->
+                        LibraryScreen(paddingValues = innerPadding)
                     }
-                ) { paddingValues ->
-                    LibraryScreen(paddingValues = paddingValues)
                 }
             }
         }

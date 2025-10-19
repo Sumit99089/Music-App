@@ -1,4 +1,4 @@
-package com.example.music.presentation.utils
+package com.example.music.presentation.miniplayer
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
@@ -33,8 +33,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.music.domain.models.SongModel
 import com.example.music.presentation.library.LibraryEvent
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun MiniPlayer(
@@ -96,7 +94,7 @@ fun MiniPlayerPreview() {
                 duration = 500
             ),
             onEvent = {}
-            )
+        )
     }
 }
 
