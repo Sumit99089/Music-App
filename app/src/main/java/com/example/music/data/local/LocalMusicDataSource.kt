@@ -2,6 +2,7 @@ package com.example.music.data.local
 
 import android.content.ContentUris
 import android.content.Context
+import android.os.Build
 import android.provider.MediaStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +26,30 @@ class LocalMusicDataSource @Inject constructor(private val context: Context) {
                 MediaStore.Audio.Media.DURATION
             )
             // Select only those audio who are Music, ie, IS_MUSIC != 0
-            val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
+            val selectionClauses = mutableListOf<String>()
+
+            // 1. Must be music
+            selectionClauses.add("${MediaStore.Audio.Media.IS_MUSIC} != 0")
+
+            // 2. Filter out ringtones, alarms, and notifications
+            selectionClauses.add("${MediaStore.Audio.Media.IS_RINGTONE} = 0")
+            selectionClauses.add("${MediaStore.Audio.Media.IS_ALARM} = 0")
+            selectionClauses.add("${MediaStore.Audio.Media.IS_NOTIFICATION} = 0")
+
+            // 3. Filter out recordings (available on Android 10 and up)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    selectionClauses.add("${MediaStore.Audio.Media.IS_RECORDING} = 0")
+                }
+            }
+
+            // 4. Filter by minimum duration.
+            // 60000 milliseconds = 1 minute. Adjust this as you like.
+            val minDurationMs = 60000
+            selectionClauses.add("${MediaStore.Audio.Media.DURATION} >= $minDurationMs")
+
+            // Join all clauses with " AND "
+            val selection = selectionClauses.joinToString(separator = " AND ")
 
             val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
 

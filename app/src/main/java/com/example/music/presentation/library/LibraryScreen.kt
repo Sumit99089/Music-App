@@ -117,7 +117,7 @@ fun LibraryScreenContent(
                             )
                             Tab.ARTISTS -> ArtistTab(
                                 artistList = state.artists,
-                                onArtistClick = { /* TODO: Fire event to navigate */ }
+                                onArtistClick = {  }
                             )
                             Tab.ALBUMS -> AlbumTab(
                                 albumList = state.albums,

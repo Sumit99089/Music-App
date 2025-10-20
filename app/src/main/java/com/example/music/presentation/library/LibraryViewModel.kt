@@ -38,7 +38,6 @@ class LibraryViewModel @Inject constructor(
             LibraryEvent.OnPlayPauseClicked -> TODO()
             LibraryEvent.OnSearchClicked -> TODO()
             is LibraryEvent.OnSongClicked -> {
-                musicServiceConnection.setMediaSongs(_state.value.songs)
                 playMusic(event.song)
             }
             is LibraryEvent.OnTabSelected -> {
@@ -53,6 +52,7 @@ class LibraryViewModel @Inject constructor(
 
             getSongsUseCase().onEach { songs->
                 _state.update { it.copy(songs = songs) }
+                musicServiceConnection.setMediaSongs(_state.value.songs)
             }.launchIn(viewModelScope)
 
             getArtistsUseCase().onEach { artists->

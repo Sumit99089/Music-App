@@ -62,6 +62,7 @@ class MusicServiceConnection @Inject constructor(
                 .setTitle(song.title)
                 .setArtist(song.artist)
                 .setDurationMs(song.duration)
+                .setAlbumTitle(song.album)
                 .build()
 
             MediaItem.Builder()
