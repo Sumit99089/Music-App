@@ -37,8 +37,13 @@ class LibraryViewModel @Inject constructor(
             LibraryEvent.OnMiniPlayerTapped -> TODO()
             LibraryEvent.OnPlayPauseClicked -> TODO()
             LibraryEvent.OnSearchClicked -> TODO()
-            is LibraryEvent.OnSongClicked -> TODO()
-            is LibraryEvent.OnTabSelected -> TODO()
+            is LibraryEvent.OnSongClicked -> {
+                musicServiceConnection.setMediaSongs(_state.value.songs)
+                playMusic(event.song)
+            }
+            is LibraryEvent.OnTabSelected -> {
+                _state.update { it.copy(selectedTab = event.tab, isLoading = false) }
+            }
         }
     }
 
@@ -57,6 +62,8 @@ class LibraryViewModel @Inject constructor(
             getAlbumsUseCase().onEach { albums->
                 _state.update { it.copy(albums = albums) }
             }.launchIn(viewModelScope)
+
+            _state.update { it.copy( isLoading = false ) }
         }
     }
 
