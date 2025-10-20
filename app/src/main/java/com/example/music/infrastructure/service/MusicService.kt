@@ -35,7 +35,6 @@ class MusicService: MediaSessionService() {
             Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
-
         // 2. Build the MediaSession
         mediaSession = MediaSession.Builder(this, exoPlayer)
             .setSessionActivity(pendingIntent) // Tell the session what to open on tap
