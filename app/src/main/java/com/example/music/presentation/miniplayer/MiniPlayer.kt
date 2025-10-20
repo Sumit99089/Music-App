@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.music.domain.models.SongModel
@@ -40,11 +43,21 @@ import com.example.music.presentation.library.LibraryEvent
 
 @Composable
 fun MiniPlayer(
-    song: SongModel?,
-    isPlaying: Boolean = false,
-    onEvent: (LibraryEvent) -> Unit
+    miniPlayerViewModel: MiniPlayerViewModel = hiltViewModel()
+){
+    val miniPLayerState by miniPlayerViewModel.state.collectAsStateWithLifecycle()
+    MiniPlayerContent(
+        state = miniPLayerState,
+        onEvent = miniPlayerViewModel::onEvent
+    )
+}
+
+@Composable
+fun MiniPlayerContent(
+    state: MiniPlayerState,
+    onEvent: (MiniPlayerEvent) -> Unit
 ) {
-    if (song == null) return
+    if (state.nowPlaying == null) return
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
@@ -52,7 +65,7 @@ fun MiniPlayer(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { onEvent(LibraryEvent.OnMiniPlayerTapped) },
+            .clickable { onEvent(MiniPlayerEvent.OnMiniPlayerTapped) },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
@@ -65,7 +78,7 @@ fun MiniPlayer(
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(song.contentUri)
+                        .data(state.nowPlaying.contentUri)
                         .crossfade(true)
                         .build(),
                     contentDescription = "Album art",
@@ -77,12 +90,22 @@ fun MiniPlayer(
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text(song.title, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(song.artist, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(
+                    text = state.nowPlaying.title,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = state.nowPlaying.artist,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
-            IconButton(onClick = { onEvent(LibraryEvent.OnPlayPauseClicked) }) {
+            IconButton(onClick = { onEvent(MiniPlayerEvent.OnPlayPauseClicked) }) {
                 Icon(
-                    imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    imageVector = if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                     contentDescription = "Play/Pause",
                     modifier = Modifier.size(32.dp)
                 )
@@ -95,15 +118,24 @@ fun MiniPlayer(
 @Composable
 fun MiniPlayerPreview() {
     MaterialTheme {
-        MiniPlayer(
-            song = SongModel(
-                id = 1,
-                title = "Song Title",
-                artist = "Artist Name",
-                contentUri = Uri.EMPTY,
-                album = "Album Name",
-                duration = 500
-            ),
+        val song = SongModel(
+            id = 1,
+            title = "Song Title",
+            artist = "Artist Name",
+            contentUri = Uri.EMPTY,
+            album = "Album Name",
+            duration = 500
+        )
+
+        val isPLaying = true
+
+        val state = MiniPlayerState(
+            nowPlaying = song,
+            isPlaying = isPLaying
+        )
+
+        MiniPlayerContent(
+            state = state,
             onEvent = {}
         )
     }
