@@ -3,6 +3,7 @@ package com.example.music.infrastructure.service
 import android.app.PendingIntent
 import android.content.Intent
 import androidx.annotation.OptIn
+import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.DefaultMediaNotificationProvider
@@ -10,6 +11,8 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.example.music.MainActivity
 import com.example.music.infrastructure.notification.NotificationConstants
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -35,9 +38,36 @@ class MusicService: MediaSessionService() {
             Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
+
+        val sessionCallback = object : MediaSession.Callback {
+            override fun onPlaybackResumption(
+                mediaSession: MediaSession,
+                controller: MediaSession.ControllerInfo
+            ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+                val player = mediaSession.player
+
+                // Build a List<MediaItem> from the player's playlist in a version-safe way
+                val mediaItems: List<MediaItem> = (0 until player.mediaItemCount).map { index ->
+                    player.getMediaItemAt(index)
+                }
+
+                val startIndex = player.currentMediaItemIndex
+                val startPosition = player.currentPosition
+
+                val resumeData = MediaSession.MediaItemsWithStartPosition(
+                    mediaItems,
+                    startIndex,
+                    startPosition
+                )
+
+                return Futures.immediateFuture(resumeData)
+            }
+        }
         // 2. Build the MediaSession
         mediaSession = MediaSession.Builder(this, exoPlayer)
-            .setSessionActivity(pendingIntent) // Tell the session what to open on tap
+            .setSessionActivity(pendingIntent)
+            .setCallback(sessionCallback)
+            // Tell the session what to open on tap
             .build()
 
         // 3. Create the Notification Provider
